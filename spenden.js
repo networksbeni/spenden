@@ -1,5 +1,6 @@
 const SPENDEN = [
     { firma: "Test Firma 1", spende: 800},
     { firma: "Test Firma 3", spende: 500},
+    { firma: "Test Firma 4", spende: 500},
     { firma: "Test Firma 2", spende: 200}
 ];
