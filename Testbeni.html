@@ -120,6 +120,7 @@
 <body>
   <h1>Top-Spender</h1>
 
+  <!-- Fortschrittsbalken -->
   <div class="fortschritt-container">
     <label for="spendenbalken"><strong>Spendenfortschritt</strong></label>
     <div class="fortschritt-hintergrund">
@@ -128,6 +129,7 @@
     <p id="spendenstand">0 CHF</p>
   </div>
 
+  <!-- Tabelle -->
   <div class="tabelle-wrapper">
     <div class="scroll-wrapper" id="scrollbereich-wrapper">
       <table>
@@ -144,16 +146,11 @@
     </div>
   </div>
 
-  <script>
-    const script = document.createElement('script');
-    script.src = '.\spenden.js?v=' + new Date().getTime();
-    document.head.appendChild(script);
-  </script>
-
+  <!-- Script mit Cache-Busting und sauberer Initialisierung -->
   <script>
     function zeigeSpenden(daten) {
       const tabelle = document.getElementById('scrollbereich');
-      const ziel = 10000;
+      const ziel = 250000;
       tabelle.innerHTML = '';
 
       daten.sort((a, b) => b.spende - a.spende);
@@ -181,13 +178,10 @@
         `${gesamt.toLocaleString('de-CH')} CHF von ${ziel.toLocaleString('de-CH')} CHF`;
     }
 
-    zeigeSpenden(SPENDEN);
-
-    // Scrollen mit Mindestgeschwindigkeit von 50 px/s
     function autoScrollTabelle() {
       const scrollWrapper = document.getElementById('scrollbereich-wrapper');
-      const maxDuration = 27000; // max. 27s scrollzeit
-      const minSpeed = 50; // mindestens 50 px/s
+      const maxDuration = 30000;
+      const minSpeed = 50;
       const pauseTop = 1000;
       const pauseBottom = 2000;
 
@@ -223,7 +217,18 @@
       }, 500);
     }
 
-    window.addEventListener('load', autoScrollTabelle);
+    // Lade spenden.js mit Timestamp, und starte erst danach
+    const script = document.createElement('script');
+    script.src = 'spenden.js?v=' + new Date().getTime();
+    script.onload = () => {
+      if (typeof SPENDEN !== 'undefined') {
+        zeigeSpenden(SPENDEN);
+        autoScrollTabelle();
+      } else {
+        console.error("SPENDEN ist nicht definiert.");
+      }
+    };
+    document.head.appendChild(script);
   </script>
 </body>
 </html>
