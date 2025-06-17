@@ -144,7 +144,12 @@
     </div>
   </div>
 
-  <script src=".\spenden.js"></script>
+  <script>
+    const script = document.createElement('script');
+    script.src = '.\spenden.js?v=' + new Date().getTime();
+    document.head.appendChild(script);
+  </script>
+
   <script>
     function zeigeSpenden(daten) {
       const tabelle = document.getElementById('scrollbereich');
