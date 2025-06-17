@@ -150,7 +150,7 @@
   <script>
     function zeigeSpenden(daten) {
       const tabelle = document.getElementById('scrollbereich');
-      const ziel = 250000;
+      const ziel = 10000;
       tabelle.innerHTML = '';
 
       daten.sort((a, b) => b.spende - a.spende);
@@ -180,7 +180,7 @@
 
     function autoScrollTabelle() {
       const scrollWrapper = document.getElementById('scrollbereich-wrapper');
-      const maxDuration = 30000;
+      const maxDuration = 27000;
       const minSpeed = 50;
       const pauseTop = 1000;
       const pauseBottom = 2000;
