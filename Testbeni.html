@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Spendenübersicht</title>
+  <meta http-equiv="refresh" content="60">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      padding: 2em;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .tabelle-wrapper {
+      width: 80%;
+      margin: auto;
+      background-color: white;
+      border: 1px solid #ccc;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    thead th, tbody td {
+      border: 1px solid #ccc;
+      padding: 12px;
+    }
+
+    thead th:first-child,
+    tbody td:first-child {
+      width: 80%;
+      text-align: left;
+    }
+
+    thead th:last-child,
+    tbody td:last-child {
+      width: 20%;
+      text-align: right;
+    }
+
+    thead th {
+      background-color: #007BFF;
+      color: white;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background-color: #007BFF;
+      z-index: 2;
+    }
+
+    tbody tr:nth-child(even) td {
+      background-color: #f9f9f9;
+    }
+
+    .highlight {
+      font-weight: bold;
+      color: darkgreen;
+    }
+
+    .scroll-wrapper {
+      max-height: 400px;
+      overflow-y: auto;
+      display: block;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .scroll-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    tbody {
+      display: block;
+    }
+
+    thead, tbody tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .fortschritt-container {
+      max-width: 800px;
+      margin: auto;
+      margin-bottom: 2em;
+    }
+
+    .fortschritt-hintergrund {
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 30px;
+    }
+
+    .fortschritt-balken {
+      height: 30px;
+      background-color: #007BFF;
+      width: 0%;
+      color: white;
+      text-align: center;
+      line-height: 30px;
+      transition: width 0.5s ease;
+    }
+
+    #spendenstand {
+      text-align: center;
+      margin-top: 0.5em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Top-Spender</h1>
+
+  <div class="fortschritt-container">
+    <label for="spendenbalken"><strong>Spendenfortschritt</strong></label>
+    <div class="fortschritt-hintergrund">
+      <div id="spendenbalken" class="fortschritt-balken">0%</div>
+    </div>
+    <p id="spendenstand">0 CHF</p>
+  </div>
+
+  <div class="tabelle-wrapper">
+    <div class="scroll-wrapper" id="scrollbereich-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Firma</th>
+            <th>Spende (CHF)</th>
+          </tr>
+        </thead>
+        <tbody id="scrollbereich">
+          <!-- Dynamischer Inhalt -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="https://networksbeni.github.io/spenden/spenden.js"></script>
+  <script>
+    function zeigeSpenden(daten) {
+      const tabelle = document.getElementById('scrollbereich');
+      const ziel = 10000;
+      tabelle.innerHTML = '';
+
+      daten.sort((a, b) => b.spende - a.spende);
+
+      let gesamt = 0;
+
+      daten.forEach((eintrag, index) => {
+        gesamt += eintrag.spende;
+
+        const row = document.createElement('tr');
+        const isTop = index === 0 ? 'highlight' : '';
+        row.innerHTML = `
+          <td class="${isTop}">${eintrag.firma}</td>
+          <td class="${isTop}">${eintrag.spende.toLocaleString('de-CH')} CHF</td>
+        `;
+        tabelle.appendChild(row);
+      });
+
+      const prozent = Math.min(100, (gesamt / ziel * 100).toFixed(1));
+      const balken = document.getElementById('spendenbalken');
+      balken.style.width = prozent + '%';
+      balken.textContent = prozent + '%';
+
+      document.getElementById('spendenstand').textContent =
+        `${gesamt.toLocaleString('de-CH')} CHF von ${ziel.toLocaleString('de-CH')} CHF`;
+    }
+
+    zeigeSpenden(SPENDEN);
+
+    // Scrollen mit Mindestgeschwindigkeit von 50 px/s
+    function autoScrollTabelle() {
+      const scrollWrapper = document.getElementById('scrollbereich-wrapper');
+      const maxDuration = 27000; // max. 27s scrollzeit
+      const minSpeed = 50; // mindestens 50 px/s
+      const pauseTop = 1000;
+      const pauseBottom = 2000;
+
+      const totalScroll = scrollWrapper.scrollHeight - scrollWrapper.clientHeight;
+      if (totalScroll <= 1) return;
+
+      const minDuration = (totalScroll / minSpeed) * 1000;
+      const duration = Math.min(maxDuration, minDuration);
+
+      function animateScroll(startTime) {
+        function step(timestamp) {
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          scrollWrapper.scrollTop = totalScroll * progress;
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            setTimeout(() => {
+              scrollWrapper.scrollTop = 0;
+              setTimeout(() => {
+                requestAnimationFrame((t) => animateScroll(t));
+              }, pauseTop);
+            }, pauseBottom);
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      setTimeout(() => {
+        requestAnimationFrame((t) => animateScroll(t));
+      }, 500);
+    }
+
+    window.addEventListener('load', autoScrollTabelle);
+  </script>
+</body>
+</html>
