@@ -122,7 +122,7 @@
   </style>
 </head>
 <body>
-  <h1>Top-Spender</h1>
+  <h1>Maggiatal, ein Jahr danach</h1>
 
   <!-- Fortschrittsbalken -->
   <div class="fortschritt-container">
@@ -176,7 +176,7 @@
       const prozent = Math.min(100, (gesamt / ziel * 100).toFixed(1));
       const balken = document.getElementById('spendenbalken');
       balken.style.width = prozent + '%';
-      balken.textContent = prozent + '%';
+      balken.textContent = '';
 
       document.getElementById('spendenstand').textContent =
         `${gesamt.toLocaleString('de-CH')} CHF von ${ziel.toLocaleString('de-CH')} CHF`;

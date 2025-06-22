@@ -118,7 +118,7 @@
   </style>
 </head>
 <body>
-  <h1>Spenden-Übersicht</h1>
+  <h1>Maggiatal, ein Jahr danach</h1>
 
   <!-- Fortschrittsbalken -->
   <div class="fortschritt-container">
@@ -172,7 +172,7 @@
       const prozent = Math.min(100, (gesamt / ziel * 100).toFixed(1));
       const balken = document.getElementById('spendenbalken');
       balken.style.width = prozent + '%';
-      balken.textContent = prozent + '%';
+      balken.textContent = '';
 
       document.getElementById('spendenstand').textContent =
         `${gesamt.toLocaleString('de-CH')} CHF von ${ziel.toLocaleString('de-CH')} CHF`;
@@ -181,7 +181,7 @@
     function autoScrollTabelle() {
       const scrollWrapper = document.getElementById('scrollbereich-wrapper');
       const maxDuration = 27000;
-      const minSpeed = 20;
+      const minSpeed = 50;
       const pauseTop = 1000;
       const pauseBottom = 2000;
 
